@@ -1,0 +1,12 @@
+<html>
+<body>
+<div>
+<h1>Tweets for @<%= name %></h1>
+<ul>
+ <% tweets.forEach(function(tweet){ %>
+ <li><%= tweet.text %></li>
+ <% }); %>
+</ul>
+</div>
+</body>
+</html>

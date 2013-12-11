@@ -1,41 +1,49 @@
 var req = require('request');
 var mu = require('mustache');
-var csv = require('fast-csv');
 var async = require('async')
 var http = require('http');
-
+var express = require('express')
 mu.root = __dirname + '/templates';
-
-var nba = "data/nba13-14.csv";
-
-parseSchedule = function(sport) {
-	return csv(sport)
- .on("data", function(data){
-     console.log(data);
- })
- .on("end", function(){
-     console.log("done");
- })
- .parse();
-};
-
+var nbaJson = require('./data/nba13-14.json');
 // Configure our HTTP server to respond with Hello World to all requests.
-var server = http.createServer(function (request, response) {
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write(function(err, response){
-  	parseSchedule(nba);
-  	response.end("Hello World\n");
-  });
+var app = express();
+
+var schedules = "";
+
+app.get('/nba', function(req, res){
+	makeSchedule();
+	res.writeHead('200', { 'content': 'text/html' });
+	res.write('success');
+	res.end();
 });
-
-// Listen on port 8000, IP defaults to 127.0.0.1
-server.listen(8000);
-
+app.listen(8000);
 // Put a friendly message on the terminal
 console.log("Server running at http://127.0.0.1:8000/");
 // include this in the server logic:
 // mu.clearCache();
-
-// var stream = mu.compileAndRender('index.html', {name: "john"});
-// util.pump(stream, res);
-
+	function getGames(ai, date){
+		var games = nbaJson[ai];
+		var name = nbaJson[ai]["Date"];
+		if ( name !== "" ){
+			for(var a=0; a<games.length; a++){
+				var game = games[date];
+				if ( game !== "" ) {
+					console.log(team + ': ' + game);
+					schedules += team + ': ' + game + '\n\t';
+				} else {
+					console.log(team + ': no game');
+					schedules += team + ': no game\n\t';
+				}
+			}
+		}
+	}
+function makeSchedule(){
+	var dateKey = nbaJson.length - 1;
+	var dates = nbaJson[dateKey];
+	for(var i=1; i<dates.length; i++){
+		var date = JSON.stringify(dates[i]);
+		console.log('Date: ' + date + '\n\t');
+		getGames(i, date);
+	}
+}
+makeSchedule();

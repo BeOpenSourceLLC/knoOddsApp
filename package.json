@@ -18,8 +18,7 @@
     "request": "*",
 	"mustache": "*",
 	"fast-csv": "*", 
-	"async": "*",
-	"http": "*"
+	"async": "*"
   },
   "license": "MIT",
   "engines": {
